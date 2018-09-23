@@ -11,6 +11,9 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 10300:80
+    networks:
+      - read_bridge
+      - write_bridge
   scooter-read-api:
     build: ./scooter-read-api
     command: node_modules/.bin/nodemon --delay 200ms --inspect=0.0.0.0:5858 -L main.js
@@ -18,6 +21,9 @@ services:
       - mongo-read
     volumes:
       - ./scooter-read-api:/src
+    networks:
+      - read_bridge
+      - message_bus_bridge
   scooter-write-api:
     build: ./scooter-write-api
     command: node_modules/.bin/nodemon --delay 200ms --inspect=0.0.0.0:5858 -L main.js
@@ -25,8 +31,13 @@ services:
       - mongo-write
     volumes:
       - ./scooter-write-api:/src
+    networks:
+      - write_bridge
+      - message_bus_bridge
   mongo-write:
     image: mongo:latest
+    networks:
+      - write_bridge
   mongo-write-ui:
     image: mongo-express
     depends_on:
@@ -34,8 +45,12 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongo-write
       - ME_CONFIG_SITE_BASEURL=/write-db
+    networks:
+      - write_bridge
   mongo-read:
     image: mongo:latest
+    networks:
+      - read_bridge
   mongo-read-ui:
     image: mongo-express
     depends_on:
@@ -43,3 +58,12 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongo-read
       - ME_CONFIG_SITE_BASEURL=/read-db
+    networks:
+      - read_bridge
+networks:
+  write_bridge:
+    driver: bridge
+  read_bridge:
+    driver: bridge
+  message_bus_bridge:
+    driver: bridge
