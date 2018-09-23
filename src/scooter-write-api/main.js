@@ -17,9 +17,9 @@ const dockingStationService = new DockingStationService(messageBus);
 const scooterService = new ScooterService(messageBus);
 
 app.get('/health', (req, res) => {
-    res.send(200).send({
-        service: 'scooter-read-api',
-        healthy: true,
+    res.status(200).send({
+        service: 'scooter-write-api',
+        status: "healthy",
         now: Date.now()
     });
 });

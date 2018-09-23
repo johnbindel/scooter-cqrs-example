@@ -7,9 +7,9 @@ const app = express();
 app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
-    res.send(200).send({
+    res.status(200).send({
         service: 'scooter-read-api',
-        healthy: true,
+        status: "healthy",
         now: Date.now()
     });
 });
