@@ -8,8 +8,8 @@ The write API is used for commands.  The read API is used for queries.
 
 ## Prerequisites
 
-Docker
-Docker-Compose
+Docker  
+Docker-Compose  
 
 Hosts file entry for scooters: `127.0.0.1 scooters`
 
