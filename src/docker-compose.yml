@@ -1,0 +1,43 @@
+version: '3.6'
+services:
+  nginx:
+    build: ./nginx
+    depends_on:
+      - scooter-read-api
+      - scooter-write-api
+      - mongo-read-ui
+      - mongo-write-ui
+    ports:
+      - 10300:80
+  scooter-read-api:
+    build: ./scooter-read-api
+    command: node_modules/.bin/nodemon --delay 200ms --inspect=0.0.0.0:5858 -L main.js
+    depends_on:
+      - mongo-read
+    volumes:
+      - ./scooter-read-api:/src
+  scooter-write-api:
+    build: ./scooter-write-api
+    command: node_modules/.bin/nodemon --delay 200ms --inspect=0.0.0.0:5858 -L main.js
+    depends_on:
+      - mongo-write
+    volumes:
+      - ./scooter-write-api:/src
+  mongo-write:
+    image: mongo:latest
+  mongo-write-ui:
+    image: mongo-express
+    depends_on:
+      - mongo-write
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-write
+      - ME_CONFIG_SITE_BASEURL=/write-db
+  mongo-read:
+    image: mongo:latest
+  mongo-read-ui:
+    image: mongo-express
+    depends_on:
+      - mongo-read
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-read
+      - ME_CONFIG_SITE_BASEURL=/read-db
